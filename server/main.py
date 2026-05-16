@@ -1,8 +1,9 @@
 import json
 import subprocess
+from dataclasses import dataclass
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -23,8 +24,8 @@ CONFIG_PATH = Path(__file__).resolve().parents[1] / "commands.json"
 class CommandRun(BaseModel):
     command_id: str
 
+@dataclass
 class Config:
-    api_token: str
     commands: list[dict]
 
 
@@ -33,7 +34,7 @@ def load_config() -> Config:
         raise FileNotFoundError(f"Configuration file not found: {CONFIG_PATH}")
     with CONFIG_PATH.open("r", encoding="utf-8") as file:
         data = json.load(file)
-    return Config(api_token=data["api_token"], commands=data["commands"])
+    return Config(commands=data["commands"])
 
 
 def get_config() -> Config:
@@ -43,19 +44,13 @@ def get_config() -> Config:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc))
 
 
-def verify_token(request: Request, config: Config = Depends(get_config)) -> None:
-    token = request.headers.get("x-api-token") or request.query_params.get("api_token")
-    if not token or token != config.api_token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token")
-
-
 @app.get("/commands")
-def list_commands(config: Config = Depends(get_config), _: None = Depends(verify_token)):
+def list_commands(config: Config = Depends(get_config)):
     return [{"id": cmd["id"], "label": cmd["label"]} for cmd in config.commands]
 
 
 @app.post("/run")
-def run_command(payload: CommandRun, config: Config = Depends(get_config), _: None = Depends(verify_token)):
+def run_command(payload: CommandRun, config: Config = Depends(get_config)):
     command = next((cmd for cmd in config.commands if cmd["id"] == payload.command_id), None)
     if command is None:
         raise HTTPException(status_code=404, detail="Command not found")

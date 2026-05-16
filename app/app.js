@@ -1,6 +1,3 @@
-const serverUrlInput = document.getElementById("serverUrl");
-const apiTokenInput = document.getElementById("apiToken");
-const fetchBtn = document.getElementById("fetchBtn");
 const buttonsContainer = document.getElementById("buttons");
 const message = document.getElementById("message");
 
@@ -10,17 +7,8 @@ function showMessage(text, error = false) {
 }
 
 async function fetchCommands() {
-  const serverUrl = serverUrlInput.value.trim();
-  const apiToken = apiTokenInput.value.trim();
-  if (!serverUrl || !apiToken) {
-    showMessage("Enter both server URL and API token.", true);
-    return;
-  }
-
   try {
-    const response = await fetch(`${serverUrl.replace(/\/$/, "")}/commands`, {
-      headers: { "x-api-token": apiToken },
-    });
+    const response = await fetch("/commands");
     if (!response.ok) {
       throw new Error(`Fetch failed: ${response.status}`);
     }
@@ -49,14 +37,11 @@ function renderButtons(commands) {
 }
 
 async function runCommand(commandId) {
-  const serverUrl = serverUrlInput.value.trim();
-  const apiToken = apiTokenInput.value.trim();
   try {
-    const response = await fetch(`${serverUrl.replace(/\/$/, "")}/run`, {
+    const response = await fetch("/run", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-token": apiToken,
       },
       body: JSON.stringify({ command_id: commandId }),
     });
@@ -71,4 +56,4 @@ async function runCommand(commandId) {
   }
 }
 
-fetchBtn.addEventListener("click", fetchCommands);
+fetchCommands();
