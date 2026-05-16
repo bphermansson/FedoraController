@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FedoraController</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="/static/manifest.json" />
+</head>
+<body>
+  <main>
+    <h1>FedoraController</h1>
+    <div class="config-row">
+      <label>Server URL</label>
+      <input id="serverUrl" placeholder="http://192.168.x.x:8001" />
+    </div>
+    <div class="config-row">
+      <label>API Token</label>
+      <input id="apiToken" type="password" placeholder="Secret token" />
+    </div>
+    <button id="fetchBtn">Fetch Buttons</button>
+    <div id="message"></div>
+    <div id="buttons" class="button-grid"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

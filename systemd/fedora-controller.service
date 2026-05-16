@@ -1,0 +1,13 @@
+[Unit]
+Description=FedoraController Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/run/media/patrik/Extra1TB/Programmering/Python/FedoraController
+ExecStart=/run/media/patrik/Extra1TB/Programmering/Python/FedoraController/.venv/bin/uvicorn server.main:app --host 0.0.0.0 --port 8001
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

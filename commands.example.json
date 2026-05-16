@@ -1,0 +1,30 @@
+{
+  "api_token": "replace-with-a-long-secret-token",
+  "commands": [
+    {
+      "id": "volume_up",
+      "label": "Volume Up",
+      "command": "pactl set-sink-volume @DEFAULT_SINK@ +5%"
+    },
+    {
+      "id": "volume_down",
+      "label": "Volume Down",
+      "command": "pactl set-sink-volume @DEFAULT_SINK@ -5%"
+    },
+    {
+      "id": "sleep",
+      "label": "Sleep",
+      "command": "systemctl suspend"
+    },
+    {
+      "id": "screen_off",
+      "label": "Turn Off Screen",
+      "command": "gdbus call --session --dest org.gnome.ScreenSaver --object-path /org/gnome/ScreenSaver --method org.gnome.ScreenSaver.SetActive true"
+    },
+    {
+      "id": "play_pause",
+      "label": "Play/Pause",
+      "command": "playerctl play-pause"
+    }
+  ]
+}
