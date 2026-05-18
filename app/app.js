@@ -6,6 +6,26 @@ function showMessage(text, error = false) {
   message.style.color = error ? "#ff6b6b" : "#8be9fd";
 }
 
+function parseApiError(detail) {
+  if (!detail) {
+    return "Unknown error";
+  }
+  if (typeof detail === "string") {
+    return detail;
+  }
+  if (typeof detail === "object") {
+    if (detail.stderr || detail.stdout || detail.returncode !== undefined) {
+      const parts = [];
+      if (detail.stderr) parts.push(`stderr: ${detail.stderr}`);
+      if (detail.stdout) parts.push(`stdout: ${detail.stdout}`);
+      if (detail.returncode !== undefined) parts.push(`returncode: ${detail.returncode}`);
+      return parts.join(" | ");
+    }
+    return JSON.stringify(detail);
+  }
+  return String(detail);
+}
+
 async function fetchCommands() {
   try {
     const response = await fetch("/commands");
@@ -38,6 +58,7 @@ function renderButtons(commands) {
 
 async function runCommand(commandId) {
   try {
+    showMessage(`Running ${commandId}...`);
     const response = await fetch("/run", {
       method: "POST",
       headers: {
@@ -45,12 +66,13 @@ async function runCommand(commandId) {
       },
       body: JSON.stringify({ command_id: commandId }),
     });
+
+    const data = await response.json().catch(() => null);
     if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.detail || `${response.status}`);
+      throw new Error(data ? parseApiError(data.detail) : `Request failed: ${response.status}`);
     }
-    const data = await response.json();
-    showMessage(`Executed: ${commandId} (${data.stdout || "ok"})`);
+
+    showMessage(`Executed: ${commandId} (${data?.stdout || "ok"})`);
   } catch (err) {
     showMessage(err.message, true);
   }
