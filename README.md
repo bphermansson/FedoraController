@@ -26,7 +26,7 @@ uvicorn server.main:app --host 0.0.0.0 --port 8001
 
 ## 4. Open on Android
 
-Open `http://YOUR_FEDORA_IP:8001` in your Android browser.
+Open `http://YOUR_FEDORA_IP:8001` in your Android browser. ("ip a").
 
 Copy the user-scoped service unit into your user systemd directory:
 
