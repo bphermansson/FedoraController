@@ -21,7 +21,6 @@ pip install -r requirements.txt
 ## 2. Run the server
 
 ```bash
-source .venv/bin/activate
 uvicorn server.main:app --host 0.0.0.0 --port 8001
 ```
 
@@ -33,6 +32,13 @@ Copy the user-scoped service unit into your user systemd directory:
 
 ```bash
 mkdir -p ~/.config/systemd/user
+```
+Adjust paths in service file:
+```
+nano systemd/user/fedora-controller.service 
+```
+Copyy the file and reload Systemd:
+```
 cp systemd/user/fedora-controller.service ~/.config/systemd/user/fedora-controller.service
 systemctl --user daemon-reload
 systemctl --user enable --now fedora-controller.service
